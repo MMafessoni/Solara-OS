@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Organograma from '@/components/Organograma'
+import KanbanVendas from '@/components/KanbanVendas'
 import FilaAprovacao from '@/components/FilaAprovacao'
 import LogoutButton from '@/components/LogoutButton'
 
@@ -10,7 +10,6 @@ type Tab = 'kanban' | 'aprovacoes'
 
 export default function VendasPage() {
   const [aba, setAba] = useState<Tab>('kanban')
-  const [pedidoSelecionado, setPedidoSelecionado] = useState<string | null>(null)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,26 +57,7 @@ export default function VendasPage() {
         </div>
 
         {/* Conteúdo */}
-        {aba === 'kanban' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">Kanban de pedidos</h2>
-                <p className="text-sm text-gray-500">
-                  Esta seção será implementada com o agente de negócio (seção 4 do SPEC)
-                </p>
-              </div>
-            </div>
-
-            <div className="lg:col-span-1">
-              {pedidoSelecionado && (
-                <Organograma area="vendas" item_id={pedidoSelecionado} />
-              )}
-            </div>
-          </div>
-        ) : (
-          <FilaAprovacao area="vendas" />
-        )}
+        {aba === 'kanban' ? <KanbanVendas /> : <FilaAprovacao area="vendas" />}
       </main>
     </div>
   )
