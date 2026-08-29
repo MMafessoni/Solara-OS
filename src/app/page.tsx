@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import LogoutButton from '@/components/LogoutButton'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -60,14 +61,17 @@ export default async function HomePage() {
             <h1 className="text-3xl font-bold text-gray-900">Solara OS</h1>
             <p className="text-sm text-gray-600 mt-1">{user.email}</p>
           </div>
-          {perfil?.papel === 'admin' && (
-            <Link
-              href="/admin"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
-            >
-              Administração
-            </Link>
-          )}
+          <div className="flex gap-2">
+            {perfil?.papel === 'admin' && (
+              <Link
+                href="/admin"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
+              >
+                Administração
+              </Link>
+            )}
+            <LogoutButton />
+          </div>
         </div>
       </header>
 
