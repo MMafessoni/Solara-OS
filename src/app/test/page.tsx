@@ -148,13 +148,29 @@ export default function TestPage() {
             )}
           </div>
 
+          {/* Debug pedidos */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Debug: Pedidos</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Verifica se os pedidos estão sendo carregados corretamente.
+            </p>
+            <a
+              href="/api/test/debug-pedidos"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700"
+            >
+              Abrir JSON de debug
+            </a>
+          </div>
+
           {/* Links úteis */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Links úteis</h2>
             <div className="space-y-2">
               <p>
                 <Link href="/vendas" className="text-blue-600 hover:underline">
-                  → /vendas (Fila de aprovação)
+                  → /vendas (Kanban e Aprovações)
                 </Link>
               </p>
               <p>
