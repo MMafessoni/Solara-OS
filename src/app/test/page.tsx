@@ -3,9 +3,38 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
+interface TableStatus {
+  pedidos_orcamento: {
+    existe: boolean
+    erro?: string
+    count: number
+  }
+  clientes: {
+    existe: boolean
+    erro?: string
+    count: number
+  }
+}
+
 export default function TestPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [tableStatus, setTableStatus] = useState<TableStatus | null>(null)
+
+  const verificarTabelas = async () => {
+    setLoading(true)
+    setMessage('')
+
+    try {
+      const response = await fetch('/api/test/check-tables')
+      const data = await response.json()
+      setTableStatus(data)
+    } catch (error) {
+      setMessage('Erro ao verificar tabelas')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const criarAprovacaoTeste = async () => {
     setLoading(true)
@@ -45,6 +74,51 @@ export default function TestPage() {
 
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="space-y-6">
+          {/* Verificar tabelas */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Verificar tabelas</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Verifica se as tabelas foram criadas no Supabase.
+            </p>
+
+            <button
+              onClick={verificarTabelas}
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loading ? 'Verificando...' : 'Verificar tabelas'}
+            </button>
+
+            {tableStatus && (
+              <div className="mt-4 space-y-2 text-sm">
+                <div
+                  className={`p-3 rounded ${
+                    tableStatus.pedidos_orcamento.existe
+                      ? 'bg-green-50 text-green-800'
+                      : 'bg-red-50 text-red-800'
+                  }`}
+                >
+                  <strong>pedidos_orcamento:</strong>{' '}
+                  {tableStatus.pedidos_orcamento.existe
+                    ? `✓ Existe (${tableStatus.pedidos_orcamento.count} pedidos)`
+                    : `✗ Não existe - ${tableStatus.pedidos_orcamento.erro}`}
+                </div>
+                <div
+                  className={`p-3 rounded ${
+                    tableStatus.clientes.existe
+                      ? 'bg-green-50 text-green-800'
+                      : 'bg-red-50 text-red-800'
+                  }`}
+                >
+                  <strong>clientes:</strong>{' '}
+                  {tableStatus.clientes.existe
+                    ? `✓ Existe (${tableStatus.clientes.count} clientes)`
+                    : `✗ Não existe - ${tableStatus.clientes.erro}`}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Criar aprovação de teste */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Criar aprovação de teste</h2>
