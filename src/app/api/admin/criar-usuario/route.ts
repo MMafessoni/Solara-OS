@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
 
   try {
     // Criar usuário no Auth usando service role
-    const adminAuthClient = createClient()
-    const { data, error } = await adminAuthClient.auth.admin.createUser({
+    const adminClient = createAdminClient()
+    const { data, error } = await adminClient.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Inserir na tabela perfis
-    const { error: perfisError } = await adminAuthClient
+    const { error: perfisError } = await adminClient
       .from('perfis')
       .insert({
         id: data.user.id,
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     if (perfisError) {
       // Se falhar, deletar o usuário criado
-      await adminAuthClient.auth.admin.deleteUser(data.user.id)
+      await adminClient.auth.admin.deleteUser(data.user.id)
       return NextResponse.json({ error: perfisError.message }, { status: 400 })
     }
 
@@ -70,7 +70,8 @@ export async function POST(request: NextRequest) {
       papel,
       areas,
     })
-  } catch (error) {
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
+  } catch (error: any) {
+    console.error('Erro ao criar usuário:', error)
+    return NextResponse.json({ error: error.message || 'Erro interno do servidor' }, { status: 500 })
   }
 }
