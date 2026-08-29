@@ -48,5 +48,4 @@ values
   ('PED003', '2026-08-24', 'C006', 'whatsapp', 'Tem retentor 40x62x10? Preciso de 10. Manda o preço.', 'novo'),
   ('PED004', '2026-08-24', 'C009', 'whatsapp', 'Boa tarde. 30 luvas de raspa e 30 óculos pra equipe nova. Pode faturar no prazo de sempre?', 'novo'),
   ('PED005', '2026-08-25', 'C002', 'telefone', 'Oi, tudo bem? Vocês vendem porca de bronze? Se tiverem, me passa o valor da porca 1/4.', 'novo'),
-  ('PED006', '2026-08-25', 'C005', 'e-mail', 'Cotar 100 chaves Phillips PH2 e 100 chaves Phillips PH3. Preço unitário e total.', 'novo')
-on conflict (cod_pedido) do nothing;
+  ('PED006', '2026-08-25', 'C005', 'e-mail', 'Cotar 100 chaves Phillips PH2 e 100 chaves Phillips PH3. Preço unitário e total.', 'novo');
