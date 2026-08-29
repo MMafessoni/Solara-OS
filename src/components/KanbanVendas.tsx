@@ -95,36 +95,56 @@ export default function KanbanVendas() {
   }, [selecionado, supabase])
 
   const loadPedidos = async () => {
-    const { data, error } = await supabase
-      .from('pedidos_orcamento')
-      .select(
-        `
-        id,
-        cod_pedido,
-        data,
-        canal,
-        mensagem,
-        status,
-        clientes:cod_cliente(nome)
-      `
-      )
-      .order('data', { ascending: false })
+    try {
+      // Buscar pedidos simples
+      const { data: pedidosData, error: pedidosError } = await supabase
+        .from('pedidos_orcamento')
+        .select('*')
+        .order('data', { ascending: false })
 
-    if (!error && data) {
-      setPedidos(
-        data.map((p: any) => ({
-          id: p.id,
-          cod_pedido: p.cod_pedido,
-          data: p.data,
-          canal: p.canal,
-          mensagem: p.mensagem,
-          status: p.status,
-          cliente_nome: p.clientes.nome,
-          cliente_cod: p.cod_cliente,
-        }))
+      if (pedidosError) {
+        console.error('Erro ao buscar pedidos:', pedidosError)
+        setLoading(false)
+        return
+      }
+
+      if (!pedidosData || pedidosData.length === 0) {
+        setPedidos([])
+        setLoading(false)
+        return
+      }
+
+      // Buscar clientes
+      const { data: clientesData, error: clientesError } = await supabase
+        .from('clientes')
+        .select('cod_cliente, nome')
+
+      if (clientesError) {
+        console.error('Erro ao buscar clientes:', clientesError)
+      }
+
+      // Mapear pedidos com nomes de clientes
+      const clientesMap = new Map(
+        clientesData?.map((c: any) => [c.cod_cliente, c.nome]) || []
       )
+
+      const pedidosMapeados = pedidosData.map((p: any) => ({
+        id: p.id,
+        cod_pedido: p.cod_pedido,
+        data: p.data,
+        canal: p.canal,
+        mensagem: p.mensagem,
+        status: p.status,
+        cliente_nome: clientesMap.get(p.cod_cliente) || 'Cliente desconhecido',
+        cliente_cod: p.cod_cliente,
+      }))
+
+      setPedidos(pedidosMapeados)
+    } catch (error) {
+      console.error('Erro ao carregar pedidos:', error)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const loadExecucoes = async (cod_pedido: string) => {
